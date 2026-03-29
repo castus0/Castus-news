@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аудио — Castus</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #00d4ff;
+            --primary-dark: #0099cc;
+            --secondary-color: #7c3aed;
+            --text-dark: #0f172a;
+            --text-light: #64748b;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --border-color: #334155;
+            --shadow: 0 4px 20px rgba(0, 212, 255, 0.15);
+            --shadow-lg: 0 10px 40px rgba(0, 212, 255, 0.25);
+            --gradient: linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: var(--bg-dark);
+            overflow-x: hidden;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes equalizer {
+            0%, 100% { height: 10px; }
+            50% { height: 30px; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Навигация */
+        .navbar {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-menu { display: flex; align-items: center; gap: 2rem; }
+        .nav-links { display: flex; gap: 1.5rem; }
+
+        .nav-links a {
+            font-weight: 500;
+            color: #e2e8f0;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .burger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+            padding: 0.5rem;
+        }
+
+        .burger span {
+            width: 25px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .burger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .burger.active span:nth-child(2) { opacity: 0; }
+        .burger.active span:nth-child(3) { transform: rotate(-45deg) translate(7px, -6px); }
+
+        /* Герой секция */
+        .page-hero {
+            background: var(--gradient);
+            padding: 10rem 2rem 5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .page-hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-hero h1 {
+            font-size: 3.5rem;
+            color: white;
+            margin-bottom: 1rem;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .page-hero p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .breadcrumb {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .breadcrumb a { color: rgba(255, 255, 255, 0.7); transition: color 0.3s ease; }
+        .breadcrumb a:hover { color: white; }
+        .breadcrumb span { color: rgba(255, 255, 255, 0.5); }
+
+        /* Анимация эквалайзера */
+        .equalizer {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 8px;
+            height: 60px;
+            margin-bottom: 2rem;
+        }
+
+        .equalizer-bar {
+            width: 12px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 6px;
+            animation: equalizer 0.5s ease infinite;
+        }
+
+        .equalizer-bar:nth-child(1) { animation-delay: 0s; }
+        .equalizer-bar:nth-child(2) { animation-delay: 0.1s; }
+        .equalizer-bar:nth-child(3) { animation-delay: 0.2s; }
+        .equalizer-bar:nth-child(4) { animation-delay: 0.3s; }
+        .equalizer-bar:nth-child(5) { animation-delay: 0.4s; }
+
+        /* Контент */
+        .section {
+            padding: 5rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: #e2e8f0;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 30px;
+            background: var(--gradient);
+            border-radius: 2px;
+        }
+
+        /* Карточки аудио */
+        .audio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .audio-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.4s ease;
+            animation: fadeInUp 0.8s ease;
+            animation-fill-mode: both;
+        }
+
+        .audio-card:nth-child(1) { animation-delay: 0.1s; }
+        .audio-card:nth-child(2) { animation-delay: 0.2s; }
+        .audio-card:nth-child(3) { animation-delay: 0.3s; }
+        .audio-card:nth-child(4) { animation-delay: 0.4s; }
+
+        .audio-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-color);
+        }
+
+        .audio-image {
+            height: 240px;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6rem;
+            position: relative;
+        }
+
+        .audio-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.8);
+            color: var(--primary-color);
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .audio-content {
+            padding: 1.5rem;
+        }
+
+        .audio-category {
+            color: var(--primary-color);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .audio-title {
+            color: #e2e8f0;
+            font-size: 1.3rem;
+            margin: 0.5rem 0;
+        }
+
+        .audio-desc {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .audio-specs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .audio-spec {
+            background: rgba(124, 58, 237, 0.2);
+            color: #a78bfa;
+            padding: 0.35rem 0.85rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+        }
+
+        .audio-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .audio-btn {
+            display: block;
+            width: 100%;
+            padding: 0.75rem;
+            margin-top: 1rem;
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .audio-btn:hover {
+            transform: scale(1.02);
+            box-shadow: var(--shadow);
+        }
+
+        /* Типы наушников */
+        .types-section {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .types-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .type-item {
+            text-align: center;
+            padding: 2rem;
+            background: var(--bg-dark);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .type-item:hover {
+            transform: scale(1.05);
+            border-color: var(--primary-color);
+        }
+
+        .type-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            display: block;
+            animation: pulse 2s infinite;
+        }
+
+        .type-item h4 {
+            color: #e2e8f0;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .type-item p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Гид по выбору */
+        .guide-block {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .guide-block h3 {
+            color: #e2e8f0;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .guide-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .guide-step {
+            display: flex;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: var(--bg-dark);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .step-content h4 {
+            color: #e2e8f0;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-content p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Футер */
+        footer {
+            background: var(--bg-card);
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 3rem;
+        }
+
+        .footer-brand .logo { display: block; margin-bottom: 1rem; }
+        .footer-brand p { color: var(--text-light); margin-bottom: 1.5rem; }
+        .footer-section h4 { color: #e2e8f0; margin-bottom: 1.5rem; }
+        .footer-section ul li { margin-bottom: 0.75rem; }
+        .footer-section a { color: var(--text-light); transition: color 0.3s ease; }
+        .footer-section a:hover { color: var(--primary-color); }
+
+        .footer-bottom {
+            max-width: 1400px;
+            margin: 3rem auto 0;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--text-light);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .nav-container { padding: 1rem; }
+            .burger { display: flex; }
+            
+            .nav-menu {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 80%;
+                max-width: 400px;
+                height: 100vh;
+                background: var(--bg-card);
+                flex-direction: column;
+                padding: 5rem 2rem 2rem;
+                transition: right 0.3s ease;
+                border-left: 1px solid var(--border-color);
+            }
+
+            .nav-menu.active { right: 0; }
+            .nav-links { flex-direction: column; width: 100%; }
+            
+            .page-hero h1 { font-size: 2rem; }
+            .audio-grid { grid-template-columns: 1fr; }
+            .footer-content { grid-template-columns: 1fr; text-align: center; }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Навигация -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="test.html" class="logo">Castus</a>
+            
+            <div class="burger" id="burger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
+            <div class="nav-menu" id="navMenu">
+                <ul class="nav-links">
+                    <li><a href="test.html">Главная</a></li>
+                    <li><a href="test.html#news">Новости</a></li>
+                    <li><a href="test.html#reviews">Обзоры</a></li>
+                    <li><a href="test.html#about">О нас</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Герой секция -->
+    <section class="page-hero">
+        <div class="page-hero-content">
+            <div class="breadcrumb">
+                <a href="test.html">Главная</a>
+                <span>/</span>
+                <span>Аудио</span>
+            </div>
+            <div class="equalizer">
+                <div class="equalizer-bar"></div>
+                <div class="equalizer-bar"></div>
+                <div class="equalizer-bar"></div>
+                <div class="equalizer-bar"></div>
+                <div class="equalizer-bar"></div>
+            </div>
+            <h1>🎧 Аудио</h1>
+            <p>Наушники, колонки и аудиотехника для истинных ценителей звука</p>
+        </div>
+    </section>
+
+    <!-- Основной контент -->
+    <section class="section">
+        <h2 class="section-title">Популярные модели</h2>
+        
+        <div class="audio-grid">
+            <a href="audio-sony-xm6.html" class="audio-card reveal">
+                <div class="audio-image">
+                    🎧
+                    <span class="audio-badge">Топ выбор</span>
+                </div>
+                <div class="audio-content">
+                    <span class="audio-category">Беспроводные наушники</span>
+                    <h3 class="audio-title">Sony WH-1000XM6</h3>
+                    <p class="audio-desc">Флагманские наушники с лучшим шумоподавлением на рынке</p>
+                    <div class="audio-specs">
+                        <span class="audio-spec">ANC Pro</span>
+                        <span class="audio-spec">30 часов</span>
+                        <span class="audio-spec">LDAC</span>
+                        <span class="audio-spec">USB-C</span>
+                    </div>
+                    <div class="audio-price">39 990 ₽</div>
+                    <button class="audio-btn">Подробнее →</button>
+                </div>
+            </a>
+
+            <div class="audio-card reveal">
+                <div class="audio-image">
+                    🎧
+                    <span class="audio-badge">Хит</span>
+                </div>
+                <div class="audio-content">
+                    <span class="audio-category">TWS наушники</span>
+                    <h3 class="audio-title">AirPods Pro 3</h3>
+                    <p class="audio-desc">Идеальный выбор для пользователей iPhone с адаптивным ANC</p>
+                    <div class="audio-specs">
+                        <span class="audio-spec">ANC</span>
+                        <span class="audio-spec">Spatial Audio</span>
+                        <span class="audio-spec">MagSafe</span>
+                        <span class="audio-spec">IP54</span>
+                    </div>
+                    <div class="audio-price">24 990 ₽</div>
+                    <button class="audio-btn">Подробнее</button>
+                </div>
+            </div>
+
+            <div class="audio-card reveal">
+                <div class="audio-image">
+                    🎧
+                    <span class="audio-badge">Топ за свои</span>
+                </div>
+                <div class="audio-content">
+                    <span class="audio-category">Беспроводные наушники</span>
+                    <h3 class="audio-title">Xiaomi Buds 5 Pro</h3>
+                    <p class="audio-desc">Лучшее соотношение цены и качества с Hi-Res аудио</p>
+                    <div class="audio-specs">
+                        <span class="audio-spec">ANC</span>
+                        <span class="audio-spec">Hi-Res</span>
+                        <span class="audio-spec">38 часов</span>
+                        <span class="audio-spec">IP54</span>
+                    </div>
+                    <div class="audio-price">12 990 ₽</div>
+                    <button class="audio-btn">Подробнее</button>
+                </div>
+            </div>
+
+            <div class="audio-card reveal">
+                <div class="audio-image">
+                    🔊
+                    <span class="audio-badge">Премиум</span>
+                </div>
+                <div class="audio-content">
+                    <span class="audio-category">Портативная колонка</span>
+                    <h3 class="audio-title">JBL Charge 6</h3>
+                    <p class="audio-desc">Мощная портативная колонка с защитой от воды</p>
+                    <div class="audio-specs">
+                        <span class="audio-spec">60W</span>
+                        <span class="audio-spec">IP67</span>
+                        <span class="audio-spec">20 часов</span>
+                        <span class="audio-spec">Powerbank</span>
+                    </div>
+                    <div class="audio-price">19 990 ₽</div>
+                    <button class="audio-btn">Подробнее</button>
+                </div>
+            </div>
+
+            <div class="audio-card reveal">
+                <div class="audio-image">
+                    🎧
+                </div>
+                <div class="audio-content">
+                    <span class="audio-category">Игровые наушники</span>
+                    <h3 class="audio-title">SteelSeries Arctis Nova Pro</h3>
+                    <p class="audio-desc">Профессиональная гарнитура для геймеров с Hi-Fi звуком</p>
+                    <div class="audio-specs">
+                        <span class="audio-spec">360° Audio</span>
+                        <span class="audio-spec">ANC</span>
+                        <span class="audio-spec">2.4 ГГц</span>
+                        <span class="audio-spec">44 часа</span>
+                    </div>
+                    <div class="audio-price">34 990 ₽</div>
+                    <button class="audio-btn">Подробнее</button>
+                </div>
+            </div>
+
+            <div class="audio-card reveal">
+                <div class="audio-image">
+                    🔊
+                </div>
+                <div class="audio-content">
+                    <span class="audio-category">Умная колонка</span>
+                    <h3 class="audio-title">HomePod 2</h3>
+                    <p class="audio-desc">Умная колонка Apple с пространственным аудио</p>
+                    <div class="audio-specs">
+                        <span class="audio-spec">Spatial Audio</span>
+                        <span class="audio-spec">Siri</span>
+                        <span class="audio-spec">HomeKit</span>
+                        <span class="audio-spec">Multi-room</span>
+                    </div>
+                    <div class="audio-price">34 990 ₽</div>
+                    <button class="audio-btn">Подробнее</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Типы наушников -->
+    <section class="section">
+        <div class="types-section reveal">
+            <h2 class="section-title" style="margin-bottom: 1rem;">Типы наушников</h2>
+            <p style="color: var(--text-light);">Выберите подходящий формат для ваших задач</p>
+            
+            <div class="types-grid">
+                <div class="type-item">
+                    <span class="type-icon">🎧</span>
+                    <h4>Полноразмерные</h4>
+                    <p>Максимальный комфорт и лучший звук для дома и путешествий</p>
+                </div>
+                <div class="type-item">
+                    <span class="type-icon">🎧</span>
+                    <h4>Внутриканальные (TWS)</h4>
+                    <p>Компактность и удобство для спорта и повседневного использования</p>
+                </div>
+                <div class="type-item">
+                    <span class="type-icon">🎧</span>
+                    <h4>Накладные</h4>
+                    <p>Баланс между размером и качеством звука</p>
+                </div>
+                <div class="type-item">
+                    <span class="type-icon">🎮</span>
+                    <h4>Игровые</h4>
+                    <p>Объёмный звук и микрофон для командной игры</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Гид по выбору -->
+        <div class="guide-block reveal">
+            <h3>🎯 Как выбрать наушники в 2026 году?</h3>
+            <div class="guide-steps">
+                <div class="guide-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Определите тип</h4>
+                        <p>Для дома — полноразмерные, для спорта — TWS, для игр — гарнитура</p>
+                    </div>
+                </div>
+                <div class="guide-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Шумоподавление</h4>
+                        <p>ANC обязательно для транспорта и офиса, опционально для дома</p>
+                    </div>
+                </div>
+                <div class="guide-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Автономность</h4>
+                        <p>От 20 часов для полноразмерных, от 5 часов для TWS (с кейсом 20+)</p>
+                    </div>
+                </div>
+                <div class="guide-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Кодеки</h4>
+                        <p>LDAC, aptX HD для Android, AAC для iPhone, LHDC для Hi-Res</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="guide-block reveal">
+            <h3>📊 Сравнение технологий</h3>
+            <table class="comparison-table" style="width: 100%; border-collapse: collapse; background: var(--bg-dark); border-radius: 15px; overflow: hidden;">
+                <thead>
+                    <tr>
+                        <th style="padding: 1rem; text-align: left; background: rgba(0, 212, 255, 0.1); color: var(--primary-color);">Технология</th>
+                        <th style="padding: 1rem; text-align: left; background: rgba(0, 212, 255, 0.1); color: var(--primary-color);">Описание</th>
+                        <th style="padding: 1rem; text-align: left; background: rgba(0, 212, 255, 0.1); color: var(--primary-color);">Для кого</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding: 1rem; color: #e2e8f0; border-top: 1px solid var(--border-color);"><strong>ANC</strong></td>
+                        <td style="padding: 1rem; color: var(--text-light); border-top: 1px solid var(--border-color);">Активное шумоподавление</td>
+                        <td style="padding: 1rem; color: var(--text-light); border-top: 1px solid var(--border-color);">Путешественники, офис</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 1rem; color: #e2e8f0; border-top: 1px solid var(--border-color);"><strong>LDAC</strong></td>
+                        <td style="padding: 1rem; color: var(--text-light); border-top: 1px solid var(--border-color);">Hi-Res кодек от Sony (990 кбит/с)</td>
+                        <td style="padding: 1rem; color: var(--text-light); border-top: 1px solid var(--border-color);">Аудиофилы на Android</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 1rem; color: #e2e8f0; border-top: 1px solid var(--border-color);"><strong>Spatial Audio</strong></td>
+                        <td style="padding: 1rem; color: var(--text-light); border-top: 1px solid var(--border-color);">Пространственное звучание</td>
+                        <td style="padding: 1rem; color: var(--text-light); border-top: 1px solid var(--border-color);">Кино, музыка, игры</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 1rem; color: #e2e8f0; border-top: 1px solid var(--border-color);"><strong>Multipoint</strong></td>
+                        <td style="padding: 1rem; color: var(--text-light); border-top: 1px solid var(--border-color);">Подключение к 2 устройствам</td>
+                        <td style="padding: 1rem; color: var(--text-light); border-top: 1px solid var(--border-color);">Работа с телефоном и ПК</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Футер -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <a href="test.html" class="logo">Castus</a>
+                <p>Ваш источник новостей о смартфонах и технологиях.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Разделы</h4>
+                <ul>
+                    <li><a href="test.html#news">Новости</a></li>
+                    <li><a href="smartphones.html">Смартфоны</a></li>
+                    <li><a href="gadgets.html">Гаджеты</a></li>
+                    <li><a href="audio.html">Аудио</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Компания</h4>
+                <ul>
+                    <li><a href="test.html#about">О нас</a></li>
+                    <li><a href="#">Команда</a></li>
+                    <li><a href="#">Реклама</a></li>
+                    <li><a href="#">Контакты</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Информация</h4>
+                <ul>
+                    <li><a href="#">Политика конфиденциальности</a></li>
+                    <li><a href="#">Условия использования</a></li>
+                    <li><a href="#">Cookie</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Castus. Все права защищены</p>
+        </div>
+    </footer>
+
+    <script>
+        const burger = document.getElementById('burger');
+        const navMenu = document.getElementById('navMenu');
+
+        burger.addEventListener('click', () => {
+            burger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                burger.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+
+        function reveal() {
+            const reveals = document.querySelectorAll('.reveal');
+            reveals.forEach(element => {
+                const windowHeight = window.innerHeight;
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < windowHeight - elementVisible) {
+                    element.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', reveal);
+        reveal();
+    </script>
+</body>
+</html>

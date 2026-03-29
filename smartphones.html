@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Смартфоны — Castus</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #00d4ff;
+            --primary-dark: #0099cc;
+            --secondary-color: #7c3aed;
+            --text-dark: #0f172a;
+            --text-light: #64748b;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --border-color: #334155;
+            --shadow: 0 4px 20px rgba(0, 212, 255, 0.15);
+            --shadow-lg: 0 10px 40px rgba(0, 212, 255, 0.25);
+            --gradient: linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: var(--bg-dark);
+            overflow-x: hidden;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Навигация */
+        .navbar {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-menu { display: flex; align-items: center; gap: 2rem; }
+        .nav-links { display: flex; gap: 1.5rem; }
+
+        .nav-links a {
+            font-weight: 500;
+            color: #e2e8f0;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .nav-links a.active {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .burger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+            padding: 0.5rem;
+        }
+
+        .burger span {
+            width: 25px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .burger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .burger.active span:nth-child(2) { opacity: 0; }
+        .burger.active span:nth-child(3) { transform: rotate(-45deg) translate(7px, -6px); }
+
+        /* Герой секция */
+        .page-hero {
+            background: var(--gradient);
+            padding: 10rem 2rem 5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .page-hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-hero h1 {
+            font-size: 3.5rem;
+            color: white;
+            margin-bottom: 1rem;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .page-hero p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .breadcrumb {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .breadcrumb a {
+            color: rgba(255, 255, 255, 0.7);
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb a:hover { color: white; }
+        .breadcrumb span { color: rgba(255, 255, 255, 0.5); }
+
+        /* Контент */
+        .section {
+            padding: 5rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: #e2e8f0;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 30px;
+            background: var(--gradient);
+            border-radius: 2px;
+        }
+
+        /* Карточки смартфонов */
+        .phones-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .phone-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.4s ease;
+            animation: fadeInUp 0.8s ease;
+            animation-fill-mode: both;
+        }
+
+        .phone-card:nth-child(1) { animation-delay: 0.1s; }
+        .phone-card:nth-child(2) { animation-delay: 0.2s; }
+        .phone-card:nth-child(3) { animation-delay: 0.3s; }
+        .phone-card:nth-child(4) { animation-delay: 0.4s; }
+
+        .phone-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-color);
+        }
+
+        .phone-image {
+            height: 250px;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6rem;
+            position: relative;
+        }
+
+        .phone-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.8);
+            color: var(--primary-color);
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .phone-content {
+            padding: 1.5rem;
+        }
+
+        .phone-brand {
+            color: var(--primary-color);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .phone-title {
+            color: #e2e8f0;
+            font-size: 1.3rem;
+            margin: 0.5rem 0;
+        }
+
+        .phone-specs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin: 1rem 0;
+        }
+
+        .phone-spec {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .phone-spec-icon {
+            color: var(--primary-color);
+        }
+
+        .phone-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-top: 1rem;
+        }
+
+        .phone-btn {
+            display: block;
+            width: 100%;
+            padding: 0.75rem;
+            margin-top: 1rem;
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .phone-btn:hover {
+            transform: scale(1.02);
+            box-shadow: var(--shadow);
+        }
+
+        /* Инфо блоки */
+        .info-block {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .info-block h3 {
+            color: #e2e8f0;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-block p {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .info-list {
+            list-style: none;
+        }
+
+        .info-list li {
+            padding: 0.75rem 0;
+            color: var(--text-light);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .info-list li:last-child {
+            border-bottom: none;
+        }
+
+        .info-list li::before {
+            content: '✓';
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        /* Сравнение */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-card);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1.25rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .comparison-table th {
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            color: #e2e8f0;
+        }
+
+        .comparison-table tr:hover {
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        /* Футер */
+        footer {
+            background: var(--bg-card);
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 3rem;
+        }
+
+        .footer-brand .logo {
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        .footer-brand p {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-section h4 {
+            color: #e2e8f0;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-section a {
+            color: var(--text-light);
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: var(--primary-color);
+        }
+
+        .footer-bottom {
+            max-width: 1400px;
+            margin: 3rem auto 0;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--text-light);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .nav-container { padding: 1rem; }
+            .burger { display: flex; }
+            
+            .nav-menu {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 80%;
+                max-width: 400px;
+                height: 100vh;
+                background: var(--bg-card);
+                flex-direction: column;
+                padding: 5rem 2rem 2rem;
+                transition: right 0.3s ease;
+                border-left: 1px solid var(--border-color);
+            }
+
+            .nav-menu.active { right: 0; }
+            .nav-links { flex-direction: column; width: 100%; }
+            
+            .page-hero h1 { font-size: 2rem; }
+            .page-hero p { font-size: 1rem; }
+            
+            .phones-grid { grid-template-columns: 1fr; }
+            
+            .footer-content { grid-template-columns: 1fr; text-align: center; }
+            
+            .comparison-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Навигация -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="test.html" class="logo">Castus</a>
+            
+            <div class="burger" id="burger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
+            <div class="nav-menu" id="navMenu">
+                <ul class="nav-links">
+                    <li><a href="test.html">Главная</a></li>
+                    <li><a href="test.html#news">Новости</a></li>
+                    <li><a href="test.html#reviews">Обзоры</a></li>
+                    <li><a href="test.html#about">О нас</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Герой секция -->
+    <section class="page-hero">
+        <div class="page-hero-content">
+            <div class="breadcrumb">
+                <a href="test.html">Главная</a>
+                <span>/</span>
+                <span>Смартфоны</span>
+            </div>
+            <h1>📱 Смартфоны</h1>
+            <p>Обзоры, характеристики и сравнения лучших смартфонов 2026 года</p>
+        </div>
+    </section>
+
+    <!-- Основной контент -->
+    <section class="section">
+        <h2 class="section-title">Популярные модели</h2>
+        
+        <div class="phones-grid">
+            <a href="phone-castus-x-pro.html" class="phone-card reveal">
+                <div class="phone-image">
+                    📱
+                    <span class="phone-badge">Флагман</span>
+                </div>
+                <div class="phone-content">
+                    <span class="phone-brand">Castus</span>
+                    <h3 class="phone-title">Castus Phone X Pro</h3>
+                    <div class="phone-specs">
+                        <div class="phone-spec">
+                            <span class="phone-spec-icon">🖥️</span>
+                            <span>6.8" AMOLED</span>
+                        </div>
+                        <div class="phone-spec">
+                            <span class="phone-spec-icon">📷</span>
+                            <span>200 МП</span>
+                        </div>
+                        <div class="phone-spec">
+                            <span class="phone-spec-icon">⚡</span>
+                            <span>Snapdragon 8 Gen 5</span>
+                        </div>
+                        <div class="phone-spec">
+                            <span class="phone-spec-icon">🔋</span>
+                            <span>6000 мАч</span>
+                        </div>
+                    </div>
+                    <div class="phone-price">от 89 990 ₽</div>
+                    <button class="phone-btn">Подробнее →</button>
+                </div>
+            </a>
+
+            <a href="phone-samsung-s26.html" class="phone-card reveal">
+                <div class="phone-image">
+                    📱
+                    <span class="phone-badge">Хит</span>
+                </div>
+                <div class="phone-content">
+                    <span class="phone-brand">Samsung</span>
+                    <h3 class="phone-title">Galaxy S26 Ultra</h3>
+                    <div class="phone-specs">
+                        <div class="phone-spec">
+                            <span class="phone-spec-icon">🖥️</span>
+                            <span>6.9" Dynamic AMOLED</span>
+                        </div>
+                        <div class="phone-spec">
+                            <span class="phone-spec-icon">📷</span>
+                            <span>250 МП</span>
+                        </div>
+                        <div class="phone-spec">
+                            <span class="phone-spec-icon">⚡</span>
+                            <span>Snapdragon 8 Gen 5</span>
+                        </div>
+                        <div class="phone-spec">
+                            <span class="phone-spec-icon">🔋</span>
+                            <span>5500 мАч</span>
+                        </div>
+                    </div>
+                    <div class="phone-price">от 119 990 ₽</div>
+                    <button class="phone-btn">Подробнее →</button>
+                </div>
+            </a>
+
+            <a href="phone-iphone-18.html" class="phone-card reveal">
+                <div class="phone-image">
+                    📱
+                    <span class="phone-badge">Новинка</span>
+                </div>
+                <div class="phone-content">
+                    <span class="phone-brand">Apple</span>
+                    <h3 class="phone-title">iPhone 18 Pro Max</h3>
+                    <div class="phone-specs">
+                        <div class="phone-spec">
+                            <span class="phone-spec-icon">🖥️</span>
+                            <span>6.9" Super Retina</span>
+                        </div>
+                        <div class="phone-spec">
+                            <span class="phone-spec-icon">📷</span>
+                            <span>108 МП</span>
+                        </div>
+                        <div class="phone-spec">
+                            <span class="phone-spec-icon">⚡</span>
+                            <span>A20 Bionic</span>
+                        </div>
+                        <div class="phone-spec">
+                            <span class="phone-spec-icon">🔋</span>
+                            <span>5000 мАч</span>
+                        </div>
+                    </div>
+                    <div class="phone-price">от 139 990 ₽</div>
+                    <button class="phone-btn">Подробнее →</button>
+                </div>
+            </a>
+
+            <a href="phone-xiaomi-15.html" class="phone-card reveal">
+                <div class="phone-image">
+                    📱
+                    <span class="phone-badge">Топ за свои</span>
+                </div>
+                <div class="phone-content">
+                    <span class="phone-brand">Xiaomi</span>
+                    <h3 class="phone-title">Xiaomi 15 Ultra</h3>
+                    <div class="phone-specs">
+                        <div class="phone-spec">
+                            <span class="phone-spec-icon">🖥️</span>
+                            <span>6.73" AMOLED</span>
+                        </div>
+                        <div class="phone-spec">
+                            <span class="phone-spec-icon">📷</span>
+                            <span>144 МП</span>
+                        </div>
+                        <div class="phone-spec">
+                            <span class="phone-spec-icon">⚡</span>
+                            <span>Snapdragon 8 Gen 5</span>
+                        </div>
+                        <div class="phone-spec">
+                            <span class="phone-spec-icon">🔋</span>
+                            <span>5400 мАч</span>
+                        </div>
+                    </div>
+                    <div class="phone-price">от 69 990 ₽</div>
+                    <button class="phone-btn">Подробнее →</button>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Информация -->
+    <section class="section">
+        <div class="info-block reveal">
+            <h3>🎯 Как выбрать смартфон в 2026 году?</h3>
+            <p>При выборе смартфона обращайте внимание на следующие параметры:</p>
+            <ul class="info-list">
+                <li><strong>Процессор</strong> — Snapdragon 8 Gen 5, A20 Bionic или Dimensity 9400 для флагманов</li>
+                <li><strong>Оперативная память</strong> — минимум 8 ГБ для комфортной работы</li>
+                <li><strong>Основная камера</strong> — от 50 МП с оптической стабилизацией</li>
+                <li><strong>Батарея</strong> — от 5000 мАч с быстрой зарядкой от 67W</li>
+                <li><strong>Дисплей</strong> — AMOLED с частотой 120 Гц или выше</li>
+                <li><strong>Память</strong> — от 256 ГБ встроенной памяти</li>
+            </ul>
+        </div>
+
+        <div class="info-block reveal">
+            <h3>📊 Сравнение флагманов</h3>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Характеристика</th>
+                        <th>Castus Phone X Pro</th>
+                        <th>Galaxy S26 Ultra</th>
+                        <th>iPhone 18 Pro Max</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Дисплей</td>
+                        <td>6.8" AMOLED 144 Гц</td>
+                        <td>6.9" AMOLED 120 Гц</td>
+                        <td>6.9" OLED 120 Гц</td>
+                    </tr>
+                    <tr>
+                        <td>Процессор</td>
+                        <td>Snapdragon 8 Gen 5</td>
+                        <td>Snapdragon 8 Gen 5</td>
+                        <td>A20 Bionic</td>
+                    </tr>
+                    <tr>
+                        <td>Камера</td>
+                        <td>200 МП</td>
+                        <td>250 МП</td>
+                        <td>108 МП</td>
+                    </tr>
+                    <tr>
+                        <td>Батарея</td>
+                        <td>6000 мАч</td>
+                        <td>5500 мАч</td>
+                        <td>5000 мАч</td>
+                    </tr>
+                    <tr>
+                        <td>Цена</td>
+                        <td>от 89 990 ₽</td>
+                        <td>от 119 990 ₽</td>
+                        <td>от 139 990 ₽</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Футер -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <a href="test.html" class="logo">Castus</a>
+                <p>Ваш источник новостей о смартфонах и технологиях.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Разделы</h4>
+                <ul>
+                    <li><a href="test.html#news">Новости</a></li>
+                    <li><a href="smartphones.html">Смартфоны</a></li>
+                    <li><a href="gadgets.html">Гаджеты</a></li>
+                    <li><a href="audio.html">Аудио</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Компания</h4>
+                <ul>
+                    <li><a href="test.html#about">О нас</a></li>
+                    <li><a href="#">Команда</a></li>
+                    <li><a href="#">Реклама</a></li>
+                    <li><a href="#">Контакты</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Информация</h4>
+                <ul>
+                    <li><a href="#">Политика конфиденциальности</a></li>
+                    <li><a href="#">Условия использования</a></li>
+                    <li><a href="#">Cookie</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Castus. Все права защищены</p>
+        </div>
+    </footer>
+
+    <script>
+        // Бургер меню
+        const burger = document.getElementById('burger');
+        const navMenu = document.getElementById('navMenu');
+
+        burger.addEventListener('click', () => {
+            burger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                burger.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+
+        // Анимация при скролле
+        function reveal() {
+            const reveals = document.querySelectorAll('.reveal');
+            reveals.forEach(element => {
+                const windowHeight = window.innerHeight;
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < windowHeight - elementVisible) {
+                    element.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', reveal);
+        reveal();
+    </script>
+</body>
+</html>

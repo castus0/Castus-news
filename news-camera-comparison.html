@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сравнение камер топ-флагманов 2026 — Новости | Castus</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --primary-color: #00d4ff; --secondary-color: #7c3aed; --text-dark: #0f172a; --text-light: #64748b; --bg-dark: #0f172a; --bg-card: #1e293b; --border-color: #334155; --gradient: linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%); }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: var(--text-dark); background: var(--bg-dark); }
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes shutter { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+        .navbar { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-color); position: fixed; top: 0; left: 0; right: 0; z-index: 1000; }
+        .nav-container { max-width: 1400px; margin: 0 auto; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.8rem; font-weight: 800; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .nav-menu { display: flex; align-items: center; gap: 2rem; }
+        .nav-links { display: flex; gap: 1.5rem; }
+        .nav-links a { font-weight: 500; color: #e2e8f0; transition: all 0.3s ease; padding: 0.5rem 1rem; border-radius: 8px; }
+        .nav-links a:hover { color: var(--primary-color); }
+        .burger { display: none; flex-direction: column; cursor: pointer; gap: 5px; padding: 0.5rem; }
+        .burger span { width: 25px; height: 3px; background: var(--primary-color); border-radius: 3px; transition: all 0.3s ease; }
+        .burger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .burger.active span:nth-child(2) { opacity: 0; }
+        .burger.active span:nth-child(3) { transform: rotate(-45deg) translate(7px, -6px); }
+        .article-hero { background: linear-gradient(135deg, #7c3aed 0%, #00d4ff 100%); padding: 12rem 2rem 6rem; position: relative; overflow: hidden; }
+        .article-hero::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%); animation: rotate 30s linear infinite; }
+        .article-content { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; }
+        .breadcrumb { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; animation: fadeInUp 0.8s ease; }
+        .breadcrumb a { color: rgba(255,255,255,0.7); transition: color 0.3s ease; }
+        .breadcrumb a:hover { color: white; }
+        .breadcrumb span { color: rgba(255,255,255,0.5); }
+        .article-category { display: inline-block; background: rgba(255,255,255,0.2); padding: 0.5rem 1.5rem; border-radius: 25px; color: white; font-size: 0.9rem; font-weight: 600; margin-bottom: 1rem; animation: fadeInUp 0.8s ease 0.1s both; }
+        .article-title { font-size: 2.8rem; color: white; margin-bottom: 1rem; line-height: 1.2; animation: fadeInUp 0.8s ease 0.2s both; }
+        .article-meta { display: flex; gap: 2rem; color: rgba(255,255,255,0.8); animation: fadeInUp 0.8s ease 0.3s both; }
+        .article-meta span { display: flex; align-items: center; gap: 0.5rem; }
+        .article-body { max-width: 900px; margin: 0 auto; padding: 5rem 2rem; }
+        .article-body p { color: var(--text-light); margin-bottom: 1.5rem; font-size: 1.1rem; line-height: 1.8; }
+        .article-body h2 { color: #e2e8f0; font-size: 1.8rem; margin: 3rem 0 1.5rem; }
+        .article-body h3 { color: #e2e8f0; font-size: 1.4rem; margin: 2rem 0 1rem; }
+        .article-image { width: 100%; border-radius: 20px; overflow: hidden; margin: 2rem 0; background: var(--gradient); height: 400px; display: flex; align-items: center; justify-content: center; font-size: 8rem; animation: shutter 3s infinite; }
+        .highlight-box { background: var(--bg-card); border-radius: 20px; padding: 2rem; margin: 2rem 0; border: 1px solid var(--border-color); }
+        .highlight-box ul { list-style: none; }
+        .highlight-box li { padding: 0.75rem 0; color: var(--text-light); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 1rem; }
+        .highlight-box li:last-child { border-bottom: none; }
+        .highlight-box li::before { content: '✓'; color: var(--primary-color); font-weight: 700; }
+        .specs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+        .spec-item { background: var(--bg-card); padding: 1.5rem; border-radius: 15px; border: 1px solid var(--border-color); text-align: center; }
+        .spec-icon { font-size: 2.5rem; margin-bottom: 0.5rem; display: block; }
+        .spec-label { color: var(--text-light); font-size: 0.85rem; }
+        .spec-value { color: #e2e8f0; font-size: 1.1rem; font-weight: 600; margin-top: 0.25rem; }
+        .quote-box { background: rgba(124, 58, 237, 0.2); border-left: 4px solid var(--secondary-color); padding: 2rem; margin: 2rem 0; border-radius: 0 15px 15px 0; }
+        .quote-box p { color: #e2e8f0; font-style: italic; font-size: 1.2rem; margin: 0; }
+        .quote-author { color: var(--secondary-color); margin-top: 1rem; font-weight: 600; }
+        .comparison-table { width: 100%; border-collapse: collapse; margin: 2rem 0; background: var(--bg-card); border-radius: 15px; overflow: hidden; }
+        .comparison-table th, .comparison-table td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--border-color); }
+        .comparison-table th { background: rgba(124, 58, 237, 0.2); color: var(--secondary-color); font-weight: 600; }
+        .comparison-table td { color: #e2e8f0; }
+        .comparison-table tr:hover { background: rgba(124, 58, 237, 0.1); }
+        .rating-box { display: flex; gap: 2rem; margin: 3rem 0; flex-wrap: wrap; }
+        .rating-card { flex: 1; min-width: 250px; background: var(--bg-card); padding: 2rem; border-radius: 20px; border: 1px solid var(--border-color); text-align: center; }
+        .rating-card.winner { border-color: #fbbf24; box-shadow: 0 0 30px rgba(251, 191, 36, 0.3); }
+        .rating-icon { font-size: 4rem; margin-bottom: 1rem; display: block; }
+        .rating-name { color: #e2e8f0; font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .rating-score { font-size: 3rem; font-weight: 700; color: var(--primary-color); }
+        .rating-score.gold { color: #fbbf24; }
+        .rating-label { color: var(--text-light); font-size: 0.9rem; margin-top: 0.5rem; }
+        .tags { display: flex; flex-wrap: wrap; gap: 0.75rem; margin: 3rem 0; }
+        .tag { background: var(--bg-card); color: var(--secondary-color); padding: 0.5rem 1.25rem; border-radius: 25px; font-size: 0.9rem; border: 1px solid var(--border-color); transition: all 0.3s ease; }
+        .tag:hover { background: var(--secondary-color); color: white; }
+        .share-section { background: var(--bg-card); border-radius: 20px; padding: 2rem; margin: 3rem 0; border: 1px solid var(--border-color); }
+        .share-section h4 { color: #e2e8f0; margin-bottom: 1rem; }
+        .share-buttons { display: flex; gap: 1rem; }
+        .share-btn { padding: 0.75rem 1.5rem; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; border: none; }
+        .share-btn.tg { background: #229ED9; color: white; }
+        .share-btn.vk { background: #0077FF; color: white; }
+        .share-btn.wa { background: #25D366; color: white; }
+        .share-btn:hover { transform: translateY(-2px); opacity: 0.9; }
+        .related-news { background: var(--bg-card); border-radius: 20px; padding: 2rem; margin: 3rem 0; border: 1px solid var(--border-color); }
+        .related-news h3 { color: #e2e8f0; margin-bottom: 1.5rem; }
+        .related-links { display: grid; gap: 1rem; }
+        .related-link { display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--bg-dark); border-radius: 12px; transition: all 0.3s ease; }
+        .related-link:hover { transform: translateX(10px); background: rgba(124, 58, 237, 0.1); }
+        .related-link-icon { font-size: 2rem; }
+        .related-link-title { color: #e2e8f0; font-weight: 500; }
+        footer { background: var(--bg-card); padding: 4rem 2rem 2rem; border-top: 1px solid var(--border-color); }
+        .footer-content { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; }
+        .footer-brand .logo { display: block; margin-bottom: 1rem; }
+        .footer-brand p { color: var(--text-light); margin-bottom: 1.5rem; }
+        .footer-section h4 { color: #e2e8f0; margin-bottom: 1.5rem; }
+        .footer-section ul li { margin-bottom: 0.75rem; }
+        .footer-section a { color: var(--text-light); transition: color 0.3s ease; }
+        .footer-section a:hover { color: var(--primary-color); }
+        .footer-bottom { max-width: 1400px; margin: 3rem auto 0; padding-top: 2rem; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-light); }
+        @media (max-width: 768px) { .nav-container { padding: 1rem; } .burger { display: flex; } .nav-menu { position: fixed; top: 0; right: -100%; width: 80%; max-width: 400px; height: 100vh; background: var(--bg-card); flex-direction: column; padding: 5rem 2rem 2rem; transition: right 0.3s ease; border-left: 1px solid var(--border-color); } .nav-menu.active { right: 0; } .nav-links { flex-direction: column; width: 100%; } .article-hero { padding: 10rem 1rem 4rem; } .article-title { font-size: 1.8rem; } .article-meta { flex-direction: column; gap: 0.5rem; } .rating-box { flex-direction: column; } .footer-content { grid-template-columns: 1fr; text-align: center; } }
+        .reveal { opacity: 0; transform: translateY(50px); transition: all 0.8s ease; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="test.html" class="logo">Castus</a>
+            <div class="burger" id="burger"><span></span><span></span><span></span></div>
+            <div class="nav-menu" id="navMenu">
+                <ul class="nav-links">
+                    <li><a href="test.html">Главная</a></li>
+                    <li><a href="test.html#news">Новости</a></li>
+                    <li><a href="smartphones.html">Смартфоны</a></li>
+                    <li><a href="gadgets.html">Гаджеты</a></li>
+                    <li><a href="audio.html">Аудио</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="article-hero">
+        <div class="article-content">
+            <div class="breadcrumb">
+                <a href="test.html">Главная</a><span>/</span>
+                <a href="test.html#news">Новости</a><span>/</span>
+                <span>Сравнение камер</span>
+            </div>
+            <span class="article-category">📷 Камеры</span>
+            <h1 class="article-title">Сравнение камер топ-флагманов 2026</h1>
+            <div class="article-meta">
+                <span>📅 26 марта 2026</span>
+                <span>👤 Автор: Дмитрий Соколов</span>
+                <span>⏱️ 8 мин чтения</span>
+            </div>
+        </div>
+    </section>
+
+    <article class="article-body">
+        <p class="reveal">
+            Мы протестировали камеры четырёх главных флагманов 2026 года в различных сценариях съёмки. 
+            В сравнении участвовали: <strong>Castus Phone X</strong>, <strong>Samsung Galaxy S26 Ultra</strong>, 
+            <strong>iPhone 18 Pro Max</strong> и <strong>Xiaomi 15 Ultra</strong>.
+        </p>
+
+        <div class="article-image reveal">📷</div>
+
+        <h2 class="reveal">📋 Участники теста</h2>
+        
+        <div class="specs-grid reveal">
+            <div class="spec-item">
+                <span class="spec-icon">📱</span>
+                <div class="spec-label">Castus Phone X</div>
+                <div class="spec-value">200 МП</div>
+            </div>
+            <div class="spec-item">
+                <span class="spec-icon">📱</span>
+                <div class="spec-label">Samsung S26 Ultra</div>
+                <div class="spec-value">250 МП</div>
+            </div>
+            <div class="spec-item">
+                <span class="spec-icon">📱</span>
+                <div class="spec-label">iPhone 18 Pro Max</div>
+                <div class="spec-value">108 МП</div>
+            </div>
+            <div class="spec-item">
+                <span class="spec-icon">📱</span>
+                <div class="spec-label">Xiaomi 15 Ultra</div>
+                <div class="spec-value">144 МП Leica</div>
+            </div>
+        </div>
+
+        <h2 class="reveal">🌞 Дневная съёмка</h2>
+        <p class="reveal">
+            При хорошем освещении все четыре смартфона показывают отличные результаты. Детализация 
+            высокая, цвета естественные, динамический диапазон широкий.
+        </p>
+
+        <div class="highlight-box reveal">
+            <h3 style="color: #e2e8f0; margin-bottom: 1rem;">Результаты дневного теста:</h3>
+            <ul>
+                <li><strong>Castus Phone X</strong> — отличная детализация, естественные цвета</li>
+                <li><strong>Samsung S26 Ultra</strong> — чуть более насыщенные цвета, лучший HDR</li>
+                <li><strong>iPhone 18 Pro Max</strong> — самые точные цвета, отличная экспозиция</li>
+                <li><strong>Xiaomi 15 Ultra</strong> — лучшая детализация благодаря Leica</li>
+            </ul>
+        </div>
+
+        <h2 class="reveal">🌙 Ночная съёмка</h2>
+        <p class="reveal">
+            Ночной режим — это то, где флагманы действительно отличаются друг от друга. Мы тестировали 
+            съёмку при освещении уличных фонарей и в практически полной темноте.
+        </p>
+
+        <table class="comparison-table reveal">
+            <thead>
+                <tr>
+                    <th>Смартфон</th>
+                    <th>Детализация</th>
+                    <th>Шумы</th>
+                    <th>Цвета</th>
+                    <th>Время обработки</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Castus Phone X</td>
+                    <td>9/10</td>
+                    <td>Отлично</td>
+                    <td>Естественные</td>
+                    <td>2.5 сек</td>
+                </tr>
+                <tr>
+                    <td>Samsung S26 Ultra</td>
+                    <td>10/10</td>
+                    <td>Превосходно</td>
+                    <td>Насыщенные</td>
+                    <td>3 сек</td>
+                </tr>
+                <tr>
+                    <td>iPhone 18 Pro Max</td>
+                    <td>8/10</td>
+                    <td>Хорошо</td>
+                    <td>Точные</td>
+                    <td>2 сек</td>
+                </tr>
+                <tr>
+                    <td>Xiaomi 15 Ultra</td>
+                    <td>9/10</td>
+                    <td>Отлично</td>
+                    <td>Leica-стиль</td>
+                    <td>3.5 сек</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 class="reveal">🔭 Зум и телефото</h2>
+        <p class="reveal">
+            Тест зума проводился на кратностях 3x, 5x, 10x и максимальном цифровом увеличении.
+        </p>
+
+        <div class="quote-box reveal">
+            <p>«Samsung S26 Ultra с его 10-кратным оптическим зумом не имеет равных в далёких планах. 
+            Но Castus Phone X с новым алгоритмом ИИ-зума удивительно близко подошёл к лидеру.»</p>
+            <div class="quote-author">— Из отчёта тестовой лаборатории</div>
+        </div>
+
+        <h2 class="reveal">🎥 Видеосъёмка</h2>
+        <p class="reveal">
+            Видеовозможности флагманов в 2026 году впечатляют. Все участники поддерживают съёмку в 8K, 
+            но с разными ограничениями по частоте кадров и длительности записи.
+        </p>
+
+        <div class="highlight-box reveal">
+            <h3 style="color: #e2e8f0; margin-bottom: 1rem;">Видеовозможности:</h3>
+            <ul>
+                <li><strong>Castus Phone X</strong> — 8K@30fps, 4K@120fps, стабилизация 5 осей</li>
+                <li><strong>Samsung S26 Ultra</strong> — 8K@60fps, 4K@120fps, Director's View</li>
+                <li><strong>iPhone 18 Pro Max</strong> — 4K@120fps Dolby Vision, ProRes, Log</li>
+                <li><strong>Xiaomi 15 Ultra</strong> — 8K@30fps, 4K@120fps, кино-режимы Leica</li>
+            </ul>
+        </div>
+
+        <h2 class="reveal">🏆 Итоговые оценки</h2>
+
+        <div class="rating-box reveal">
+            <div class="rating-card winner">
+                <span class="rating-icon">🥇</span>
+                <div class="rating-name">Samsung S26 Ultra</div>
+                <div class="rating-score gold">9.5/10</div>
+                <div class="rating-label">Лучшая камера</div>
+            </div>
+            <div class="rating-card">
+                <span class="rating-icon">🥈</span>
+                <div class="rating-name">Castus Phone X</div>
+                <div class="rating-score">9.2/10</div>
+                <div class="rating-label">Лучшая цена/качество</div>
+            </div>
+            <div class="rating-card">
+                <span class="rating-icon">🥉</span>
+                <div class="rating-name">Xiaomi 15 Ultra</div>
+                <div class="rating-score">9.0/10</div>
+                <div class="rating-label">Лучший для энтузиастов</div>
+            </div>
+            <div class="rating-card">
+                <span class="rating-icon">🎬</span>
+                <div class="rating-name">iPhone 18 Pro Max</div>
+                <div class="rating-score">8.8/10</div>
+                <div class="rating-label">Лучшее видео</div>
+            </div>
+        </div>
+
+        <h2 class="reveal">📝 Выводы</h2>
+        <p class="reveal">
+            <strong>Samsung Galaxy S26 Ultra</strong> заслуженно получает звание лучшего камерофона 2026 года. 
+            Универсальность, отличный зум и лучшее ночное фото делают его выбором номер один.
+        </p>
+        <p class="reveal">
+            <strong>Castus Phone X</strong> — лучший выбор для тех, кто хочет флагманскую камеру по 
+            разумной цене. Разница в качестве с лидером минимальна, а цена значительно ниже.
+        </p>
+        <p class="reveal">
+            <strong>iPhone 18 Pro Max</strong> остаётся королём видеосъёмки. Если вы снимаете много видео 
+            для соцсетей — это ваш выбор.
+        </p>
+        <p class="reveal">
+            <strong>Xiaomi 15 Ultra</strong> понравится фотографам-энтузиастам благодаря уникальным 
+            фильтрам Leica и отличному качеству съёмки.
+        </p>
+
+        <div class="tags reveal">
+            <span class="tag">#Камера</span>
+            <span class="tag">#Сравнение</span>
+            <span class="tag">#Флагманы</span>
+            <span class="tag">#Тест</span>
+            <span class="tag">#Фото</span>
+            <span class="tag">#2026</span>
+        </div>
+
+        <div class="share-section reveal">
+            <h4>Поделиться новостью:</h4>
+            <div class="share-buttons">
+                <button class="share-btn tg">Telegram</button>
+                <button class="share-btn vk">VKontakte</button>
+                <button class="share-btn wa">WhatsApp</button>
+            </div>
+        </div>
+
+        <div class="related-news reveal">
+            <h3>Читайте также:</h3>
+            <div class="related-links">
+                <a href="news-castus-phone-x.html" class="related-link">
+                    <span class="related-link-icon">📱</span>
+                    <span class="related-link-title">Castus Phone X представлен официально</span>
+                </a>
+                <a href="news-battery-breakthrough.html" class="related-link">
+                    <span class="related-link-icon">🔋</span>
+                    <span class="related-link-title">Прорыв в аккумуляторах: зарядка за 5 минут</span>
+                </a>
+                <a href="smartphones.html" class="related-link">
+                    <span class="related-link-icon">📱</span>
+                    <span class="related-link-title">Все смартфоны — каталог Castus</span>
+                </a>
+            </div>
+        </div>
+    </article>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand"><a href="test.html" class="logo">Castus</a><p>Ваш источник новостей о смартфонах и технологиях.</p></div>
+            <div class="footer-section"><h4>Разделы</h4><ul><li><a href="test.html#news">Новости</a></li><li><a href="smartphones.html">Смартфоны</a></li><li><a href="gadgets.html">Гаджеты</a></li><li><a href="audio.html">Аудио</a></li></ul></div>
+            <div class="footer-section"><h4>Компания</h4><ul><li><a href="test.html#about">О нас</a></li><li><a href="#">Команда</a></li><li><a href="#">Реклама</a></li><li><a href="#">Контакты</a></li></ul></div>
+            <div class="footer-section"><h4>Информация</h4><ul><li><a href="#">Политика конфиденциальности</a></li><li><a href="#">Условия использования</a></li><li><a href="#">Cookie</a></li></ul></div>
+        </div>
+        <div class="footer-bottom"><p>&copy; 2026 Castus. Все права защищены</p></div>
+    </footer>
+
+    <script>
+        const burger = document.getElementById('burger');
+        const navMenu = document.getElementById('navMenu');
+        burger.addEventListener('click', () => { burger.classList.toggle('active'); navMenu.classList.toggle('active'); });
+        document.querySelectorAll('.nav-links a').forEach(link => { link.addEventListener('click', () => { burger.classList.remove('active'); navMenu.classList.remove('active'); }); });
+        function reveal() {
+            const reveals = document.querySelectorAll('.reveal');
+            reveals.forEach(element => {
+                const windowHeight = window.innerHeight;
+                const elementTop = element.getBoundingClientRect().top;
+                if (elementTop < windowHeight - 150) { element.classList.add('active'); }
+            });
+        }
+        window.addEventListener('scroll', reveal);
+        reveal();
+    </script>
+</body>
+</html>

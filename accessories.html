@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аксессуары — Castus</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #00d4ff;
+            --primary-dark: #0099cc;
+            --secondary-color: #7c3aed;
+            --text-dark: #0f172a;
+            --text-light: #64748b;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --border-color: #334155;
+            --shadow: 0 4px 20px rgba(0, 212, 255, 0.15);
+            --shadow-lg: 0 10px 40px rgba(0, 212, 255, 0.25);
+            --gradient: linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: var(--bg-dark);
+            overflow-x: hidden;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes charge {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 212, 255, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(0, 212, 255, 0.6); }
+        }
+
+        /* Навигация */
+        .navbar {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-menu { display: flex; align-items: center; gap: 2rem; }
+        .nav-links { display: flex; gap: 1.5rem; }
+
+        .nav-links a {
+            font-weight: 500;
+            color: #e2e8f0;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .burger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+            padding: 0.5rem;
+        }
+
+        .burger span {
+            width: 25px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .burger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .burger.active span:nth-child(2) { opacity: 0; }
+        .burger.active span:nth-child(3) { transform: rotate(-45deg) translate(7px, -6px); }
+
+        /* Герой секция */
+        .page-hero {
+            background: var(--gradient);
+            padding: 10rem 2rem 5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .page-hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-hero h1 {
+            font-size: 3.5rem;
+            color: white;
+            margin-bottom: 1rem;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .page-hero p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .breadcrumb {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .breadcrumb a { color: rgba(255, 255, 255, 0.7); transition: color 0.3s ease; }
+        .breadcrumb a:hover { color: white; }
+        .breadcrumb span { color: rgba(255, 255, 255, 0.5); }
+
+        /* Контент */
+        .section {
+            padding: 5rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: #e2e8f0;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 30px;
+            background: var(--gradient);
+            border-radius: 2px;
+        }
+
+        /* Категории аксессуаров */
+        .categories-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            justify-content: center;
+        }
+
+        .category-tab {
+            padding: 0.75rem 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            color: #e2e8f0;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .category-tab:hover,
+        .category-tab.active {
+            background: var(--gradient);
+            border-color: transparent;
+            color: white;
+        }
+
+        /* Карточки аксессуаров */
+        .accessories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .accessory-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.4s ease;
+            animation: fadeInUp 0.8s ease;
+            animation-fill-mode: both;
+        }
+
+        .accessory-card:nth-child(1) { animation-delay: 0.1s; }
+        .accessory-card:nth-child(2) { animation-delay: 0.2s; }
+        .accessory-card:nth-child(3) { animation-delay: 0.3s; }
+        .accessory-card:nth-child(4) { animation-delay: 0.4s; }
+
+        .accessory-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-color);
+        }
+
+        .accessory-image {
+            height: 200px;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            position: relative;
+        }
+
+        .accessory-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.8);
+            color: var(--primary-color);
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .accessory-content {
+            padding: 1.5rem;
+        }
+
+        .accessory-category {
+            color: var(--primary-color);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .accessory-title {
+            color: #e2e8f0;
+            font-size: 1.2rem;
+            margin: 0.5rem 0;
+        }
+
+        .accessory-desc {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .accessory-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .accessory-feature {
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--primary-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+
+        .accessory-price {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .accessory-btn {
+            display: block;
+            width: 100%;
+            padding: 0.75rem;
+            margin-top: 1rem;
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .accessory-btn:hover {
+            transform: scale(1.02);
+            box-shadow: var(--shadow);
+        }
+
+        /* Инфо блоки */
+        .info-block {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .info-block h3 {
+            color: #e2e8f0;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-block p {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .tip-item {
+            background: var(--bg-dark);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .tip-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+        }
+
+        .tip-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .tip-item h4 {
+            color: #e2e8f0;
+            margin-bottom: 0.5rem;
+        }
+
+        .tip-item p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Сравнение зарядок */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-dark);
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 1.5rem;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .comparison-table th {
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            color: #e2e8f0;
+        }
+
+        .comparison-table tr:hover {
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        /* Футер */
+        footer {
+            background: var(--bg-card);
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 3rem;
+        }
+
+        .footer-brand .logo { display: block; margin-bottom: 1rem; }
+        .footer-brand p { color: var(--text-light); margin-bottom: 1.5rem; }
+        .footer-section h4 { color: #e2e8f0; margin-bottom: 1.5rem; }
+        .footer-section ul li { margin-bottom: 0.75rem; }
+        .footer-section a { color: var(--text-light); transition: color 0.3s ease; }
+        .footer-section a:hover { color: var(--primary-color); }
+
+        .footer-bottom {
+            max-width: 1400px;
+            margin: 3rem auto 0;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--text-light);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .nav-container { padding: 1rem; }
+            .burger { display: flex; }
+            
+            .nav-menu {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 80%;
+                max-width: 400px;
+                height: 100vh;
+                background: var(--bg-card);
+                flex-direction: column;
+                padding: 5rem 2rem 2rem;
+                transition: right 0.3s ease;
+                border-left: 1px solid var(--border-color);
+            }
+
+            .nav-menu.active { right: 0; }
+            .nav-links { flex-direction: column; width: 100%; }
+            
+            .page-hero h1 { font-size: 2rem; }
+            .accessories-grid { grid-template-columns: 1fr; }
+            .footer-content { grid-template-columns: 1fr; text-align: center; }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Навигация -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="test.html" class="logo">Castus</a>
+            
+            <div class="burger" id="burger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
+            <div class="nav-menu" id="navMenu">
+                <ul class="nav-links">
+                    <li><a href="test.html">Главная</a></li>
+                    <li><a href="test.html#news">Новости</a></li>
+                    <li><a href="test.html#reviews">Обзоры</a></li>
+                    <li><a href="test.html#about">О нас</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Герой секция -->
+    <section class="page-hero">
+        <div class="page-hero-content">
+            <div class="breadcrumb">
+                <a href="test.html">Главная</a>
+                <span>/</span>
+                <span>Аксессуары</span>
+            </div>
+            <h1>🔌 Аксессуары</h1>
+            <p>Зарядки, кабели, чехлы и другие полезные аксессуары для ваших устройств</p>
+        </div>
+    </section>
+
+    <!-- Основной контент -->
+    <section class="section">
+        <!-- Табы категорий -->
+        <div class="categories-tabs reveal">
+            <div class="category-tab active">🔋 Зарядки</div>
+            <div class="category-tab">📱 Чехлы</div>
+            <div class="category-tab">🔌 Кабели</div>
+            <div class="category-tab">🛡️ Защита</div>
+            <div class="category-tab">🎒 Сумки</div>
+        </div>
+
+        <h2 class="section-title">Популярные аксессуары</h2>
+        
+        <div class="accessories-grid">
+            <a href="accessory-castus-gan.html" class="accessory-card reveal">
+                <div class="accessory-image">
+                    🔋
+                    <span class="accessory-badge">Хит</span>
+                </div>
+                <div class="accessory-content">
+                    <span class="accessory-category">Зарядное устройство</span>
+                    <h3 class="accessory-title">Castus GaN 100W</h3>
+                    <p class="accessory-desc">Компактное зарядное устройство с технологией GaN и 4 портами</p>
+                    <div class="accessory-features">
+                        <span class="accessory-feature">100W</span>
+                        <span class="accessory-feature">GaN</span>
+                        <span class="accessory-feature">4 порта</span>
+                        <span class="accessory-feature">USB-C</span>
+                    </div>
+                    <div class="accessory-price">4 990 ₽</div>
+                    <button class="accessory-btn">Подробнее →</button>
+                </div>
+            </a>
+
+            <div class="accessory-card reveal">
+                <div class="accessory-image">
+                    🔋
+                    <span class="accessory-badge">Новинка</span>
+                </div>
+                <div class="accessory-content">
+                    <span class="accessory-category">Power Bank</span>
+                    <h3 class="accessory-title">Anker 737 Pro</h3>
+                    <p class="accessory-desc">Ёмкий пауэрбанк с дисплеем и быстрой зарядкой 140W</p>
+                    <div class="accessory-features">
+                        <span class="accessory-feature">24000 мАч</span>
+                        <span class="accessory-feature">140W</span>
+                        <span class="accessory-feature">Дисплей</span>
+                        <span class="accessory-feature">USB-C</span>
+                    </div>
+                    <div class="accessory-price">12 990 ₽</div>
+                    <button class="accessory-btn">Подробнее</button>
+                </div>
+            </div>
+
+            <div class="accessory-card reveal">
+                <div class="accessory-image">
+                    📱
+                </div>
+                <div class="accessory-content">
+                    <span class="accessory-category">Чехол</span>
+                    <h3 class="accessory-title">Spigen Ultra Hybrid</h3>
+                    <p class="accessory-desc">Прозрачный чехол с усиленной защитой углов</p>
+                    <div class="accessory-features">
+                        <span class="accessory-feature">TPU</span>
+                        <span class="accessory-feature">Air Cushion</span>
+                        <span class="accessory-feature">MagSafe</span>
+                        <span class="accessory-feature">Жёлтый</span>
+                    </div>
+                    <div class="accessory-price">2 490 ₽</div>
+                    <button class="accessory-btn">Подробнее</button>
+                </div>
+            </div>
+
+            <div class="accessory-card reveal">
+                <div class="accessory-image">
+                    🔌
+                    <span class="accessory-badge">Топ за свои</span>
+                </div>
+                <div class="accessory-content">
+                    <span class="accessory-category">Кабель</span>
+                    <h3 class="accessory-title">Baseus 100W USB-C</h3>
+                    <p class="accessory-desc">Прочный кабель с поддержкой быстрой зарядки и передачи данных</p>
+                    <div class="accessory-features">
+                        <span class="accessory-feature">100W</span>
+                        <span class="accessory-feature">5A</span>
+                        <span class="accessory-feature">2 м</span>
+                        <span class="accessory-feature">USB 3.0</span>
+                    </div>
+                    <div class="accessory-price">890 ₽</div>
+                    <button class="accessory-btn">Подробнее</button>
+                </div>
+            </div>
+
+            <div class="accessory-card reveal">
+                <div class="accessory-image">
+                    🛡️
+                </div>
+                <div class="accessory-content">
+                    <span class="accessory-category">Защитное стекло</span>
+                    <h3 class="accessory-title">Nillkin 3D CP+ Pro</h3>
+                    <p class="accessory-desc">Закалённое стекло с полным покрытием и олеофобным покрытием</p>
+                    <div class="accessory-features">
+                        <span class="accessory-feature">9H</span>
+                        <span class="accessory-feature">3D</span>
+                        <span class="accessory-feature">Олеофоб</span>
+                        <span class="accessory-feature">2 шт</span>
+                    </div>
+                    <div class="accessory-price">1 290 ₽</div>
+                    <button class="accessory-btn">Подробнее</button>
+                </div>
+            </div>
+
+            <div class="accessory-card reveal">
+                <div class="accessory-image">
+                    🎒
+                </div>
+                <div class="accessory-content">
+                    <span class="accessory-category">Сумка</span>
+                    <h3 class="accessory-title">Xiaomi Urban Life</h3>
+                    <p class="accessory-desc">Городской рюкзак с отделением для ноутбука и USB-портом</p>
+                    <div class="accessory-features">
+                        <span class="accessory-feature">15.6"</span>
+                        <span class="accessory-feature">20L</span>
+                        <span class="accessory-feature">USB</span>
+                        <span class="accessory-feature">Водостойкий</span>
+                    </div>
+                    <div class="accessory-price">3 990 ₽</div>
+                    <button class="accessory-btn">Подробнее</button>
+                </div>
+            </div>
+
+            <div class="accessory-card reveal">
+                <div class="accessory-image">
+                    📱
+                </div>
+                <div class="accessory-content">
+                    <span class="accessory-category">Держатель</span>
+                    <h3 class="accessory-title">MagSafe Car Mount</h3>
+                    <p class="accessory-desc">Магнитный автодержатель с креплением в дефлектор</p>
+                    <div class="accessory-features">
+                        <span class="accessory-feature">MagSafe</span>
+                        <span class="accessory-feature">360°</span>
+                        <span class="accessory-feature">Дефлектор</span>
+                        <span class="accessory-feature">Алюминий</span>
+                    </div>
+                    <div class="accessory-price">2 990 ₽</div>
+                    <button class="accessory-btn">Подробнее</button>
+                </div>
+            </div>
+
+            <div class="accessory-card reveal">
+                <div class="accessory-image">
+                    ⌚
+                </div>
+                <div class="accessory-content">
+                    <span class="accessory-category">Ремешок</span>
+                    <h3 class="accessory-title">Apple Watch Band</h3>
+                    <p class="accessory-desc">Силиконовый ремешок для Apple Watch 42-49 мм</p>
+                    <div class="accessory-features">
+                        <span class="accessory-feature">Силикон</span>
+                        <span class="accessory-feature">42-49 мм</span>
+                        <span class="accessory-feature">Спорт</span>
+                        <span class="accessory-feature">10 цветов</span>
+                    </div>
+                    <div class="accessory-price">1 490 ₽</div>
+                    <button class="accessory-btn">Подробнее</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Информация -->
+    <section class="section">
+        <div class="info-block reveal">
+            <h3>🔋 Гид по зарядным устройствам</h3>
+            <p>Выбор правильного зарядного устройства может значительно ускорить зарядку ваших устройств. Вот что нужно знать:</p>
+            
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Технология</th>
+                        <th>Мощность</th>
+                        <th>Для чего подходит</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>USB-A 5W</strong></td>
+                        <td>5W (5V/1A)</td>
+                        <td>Старые смартфоны, наушники, часы</td>
+                    </tr>
+                    <tr>
+                        <td><strong>USB-A QC 3.0</strong></td>
+                        <td>18-36W</td>
+                        <td>Смартфоны с Quick Charge</td>
+                    </tr>
+                    <tr>
+                        <td><strong>USB-C PD</strong></td>
+                        <td>20-100W</td>
+                        <td>Современные смартфоны, ноутбуки</td>
+                    </tr>
+                    <tr>
+                        <td><strong>GaN (нитрид галлия)</strong></td>
+                        <td>65-200W</td>
+                        <td>Компактные мощные зарядки для всего</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Беспроводная Qi2</strong></td>
+                        <td>15-50W</td>
+                        <td>Смартфоны с беспроводной зарядкой</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="info-block reveal">
+            <h3>💡 Советы по выбору аксессуаров</h3>
+            
+            <div class="tips-grid">
+                <div class="tip-item">
+                    <span class="tip-icon">🔋</span>
+                    <h4>Зарядные устройства</h4>
+                    <p>Выбирайте GaN-зарядки — они компактнее и меньше греются. Мощность от 65W для универсальности.</p>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-icon">🔌</span>
+                    <h4>Кабели</h4>
+                    <p>Ищите кабели с сертификацией USB-IF. Для быстрой зарядки нужна поддержка 5A и 100W.</p>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-icon">📱</span>
+                    <h4>Чехлы</h4>
+                    <p>TPU — лучший баланс защиты и цены. Для максимальной защиты — комбинированные чехлы.</p>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-icon">🛡️</span>
+                    <h4>Защитные стёкла</h4>
+                    <p>Твёрдость 9H, олеофобное покрытие и 3D-края для полного покрытия экрана.</p>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-icon">🔋</span>
+                    <h4>Power Bank</h4>
+                    <p>Ёмкость от 10000 мАч для смартфона, от 20000 мАч для ноутбука. PD от 45W.</p>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-icon">🎒</span>
+                    <h4>Сумки и рюкзаки</h4>
+                    <p>Отделение для ноутбука 15-16", водостойкий материал, USB-порт для пауэрбанка.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Футер -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <a href="test.html" class="logo">Castus</a>
+                <p>Ваш источник новостей о смартфонах и технологиях.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Разделы</h4>
+                <ul>
+                    <li><a href="test.html#news">Новости</a></li>
+                    <li><a href="smartphones.html">Смартфоны</a></li>
+                    <li><a href="gadgets.html">Гаджеты</a></li>
+                    <li><a href="audio.html">Аудио</a></li>
+                    <li><a href="accessories.html">Аксессуары</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Компания</h4>
+                <ul>
+                    <li><a href="test.html#about">О нас</a></li>
+                    <li><a href="#">Команда</a></li>
+                    <li><a href="#">Реклама</a></li>
+                    <li><a href="#">Контакты</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Информация</h4>
+                <ul>
+                    <li><a href="#">Политика конфиденциальности</a></li>
+                    <li><a href="#">Условия использования</a></li>
+                    <li><a href="#">Cookie</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Castus. Все права защищены</p>
+        </div>
+    </footer>
+
+    <script>
+        const burger = document.getElementById('burger');
+        const navMenu = document.getElementById('navMenu');
+
+        burger.addEventListener('click', () => {
+            burger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                burger.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+
+        // Табы категорий
+        document.querySelectorAll('.category-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+            });
+        });
+
+        function reveal() {
+            const reveals = document.querySelectorAll('.reveal');
+            reveals.forEach(element => {
+                const windowHeight = window.innerHeight;
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < windowHeight - elementVisible) {
+                    element.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', reveal);
+        reveal();
+    </script>
+</body>
+</html>

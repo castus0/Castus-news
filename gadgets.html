@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Гаджеты — Castus</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #00d4ff;
+            --primary-dark: #0099cc;
+            --secondary-color: #7c3aed;
+            --text-dark: #0f172a;
+            --text-light: #64748b;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --border-color: #334155;
+            --shadow: 0 4px 20px rgba(0, 212, 255, 0.15);
+            --shadow-lg: 0 10px 40px rgba(0, 212, 255, 0.25);
+            --gradient: linear-gradient(135deg, #00d4ff 0%, #7c3aed 100%);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: var(--bg-dark);
+            overflow-x: hidden;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Навигация */
+        .navbar {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-menu { display: flex; align-items: center; gap: 2rem; }
+        .nav-links { display: flex; gap: 1.5rem; }
+
+        .nav-links a {
+            font-weight: 500;
+            color: #e2e8f0;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .burger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+            padding: 0.5rem;
+        }
+
+        .burger span {
+            width: 25px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .burger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .burger.active span:nth-child(2) { opacity: 0; }
+        .burger.active span:nth-child(3) { transform: rotate(-45deg) translate(7px, -6px); }
+
+        /* Герой секция */
+        .page-hero {
+            background: var(--gradient);
+            padding: 10rem 2rem 5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .page-hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-hero h1 {
+            font-size: 3.5rem;
+            color: white;
+            margin-bottom: 1rem;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .page-hero p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .breadcrumb {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .breadcrumb a { color: rgba(255, 255, 255, 0.7); transition: color 0.3s ease; }
+        .breadcrumb a:hover { color: white; }
+        .breadcrumb span { color: rgba(255, 255, 255, 0.5); }
+
+        /* Контент */
+        .section {
+            padding: 5rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: #e2e8f0;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 30px;
+            background: var(--gradient);
+            border-radius: 2px;
+        }
+
+        /* Карточки гаджетов */
+        .gadgets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .gadget-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.4s ease;
+            animation: fadeInUp 0.8s ease;
+            animation-fill-mode: both;
+        }
+
+        .gadget-card:nth-child(1) { animation-delay: 0.1s; }
+        .gadget-card:nth-child(2) { animation-delay: 0.2s; }
+        .gadget-card:nth-child(3) { animation-delay: 0.3s; }
+        .gadget-card:nth-child(4) { animation-delay: 0.4s; }
+
+        .gadget-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-color);
+        }
+
+        .gadget-image {
+            height: 220px;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            position: relative;
+        }
+
+        .gadget-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.8);
+            color: var(--primary-color);
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .gadget-content {
+            padding: 1.5rem;
+        }
+
+        .gadget-category {
+            color: var(--primary-color);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .gadget-title {
+            color: #e2e8f0;
+            font-size: 1.2rem;
+            margin: 0.5rem 0;
+        }
+
+        .gadget-desc {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .gadget-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .gadget-feature {
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--primary-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+
+        .gadget-price {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .gadget-btn {
+            display: block;
+            width: 100%;
+            padding: 0.75rem;
+            margin-top: 1rem;
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .gadget-btn:hover {
+            transform: scale(1.02);
+            box-shadow: var(--shadow);
+        }
+
+        /* Инфо блоки */
+        .info-block {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .info-block h3 {
+            color: #e2e8f0;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-block p {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .feature-item {
+            background: var(--bg-dark);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .feature-item h4 {
+            color: #e2e8f0;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-item p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Футер */
+        footer {
+            background: var(--bg-card);
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 3rem;
+        }
+
+        .footer-brand .logo { display: block; margin-bottom: 1rem; }
+        .footer-brand p { color: var(--text-light); margin-bottom: 1.5rem; }
+        .footer-section h4 { color: #e2e8f0; margin-bottom: 1.5rem; }
+        .footer-section ul li { margin-bottom: 0.75rem; }
+        .footer-section a { color: var(--text-light); transition: color 0.3s ease; }
+        .footer-section a:hover { color: var(--primary-color); }
+
+        .footer-bottom {
+            max-width: 1400px;
+            margin: 3rem auto 0;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--text-light);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .nav-container { padding: 1rem; }
+            .burger { display: flex; }
+            
+            .nav-menu {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 80%;
+                max-width: 400px;
+                height: 100vh;
+                background: var(--bg-card);
+                flex-direction: column;
+                padding: 5rem 2rem 2rem;
+                transition: right 0.3s ease;
+                border-left: 1px solid var(--border-color);
+            }
+
+            .nav-menu.active { right: 0; }
+            .nav-links { flex-direction: column; width: 100%; }
+            
+            .page-hero h1 { font-size: 2rem; }
+            .gadgets-grid { grid-template-columns: 1fr; }
+            .footer-content { grid-template-columns: 1fr; text-align: center; }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Навигация -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="test.html" class="logo">Castus</a>
+            
+            <div class="burger" id="burger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
+            <div class="nav-menu" id="navMenu">
+                <ul class="nav-links">
+                    <li><a href="test.html">Главная</a></li>
+                    <li><a href="test.html#news">Новости</a></li>
+                    <li><a href="test.html#reviews">Обзоры</a></li>
+                    <li><a href="test.html#about">О нас</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Герой секция -->
+    <section class="page-hero">
+        <div class="page-hero-content">
+            <div class="breadcrumb">
+                <a href="test.html">Главная</a>
+                <span>/</span>
+                <span>Гаджеты</span>
+            </div>
+            <h1>⌚ Гаджеты</h1>
+            <p>Умные часы, фитнес-браслеты и носимые устройства будущего</p>
+        </div>
+    </section>
+
+    <!-- Основной контент -->
+    <section class="section">
+        <h2 class="section-title">Популярные гаджеты</h2>
+        
+        <div class="gadgets-grid">
+            <a href="gadget-castus-watch.html" class="gadget-card reveal">
+                <div class="gadget-image">
+                    ⌚
+                    <span class="gadget-badge">Хит</span>
+                </div>
+                <div class="gadget-content">
+                    <span class="gadget-category">Умные часы</span>
+                    <h3 class="gadget-title">Castus Watch Pro 3</h3>
+                    <p class="gadget-desc">Флагманские умные часы с AMOLED-дисплеем и автономностью до 14 дней</p>
+                    <div class="gadget-features">
+                        <span class="gadget-feature">AMOLED</span>
+                        <span class="gadget-feature">GPS</span>
+                        <span class="gadget-feature">NFC</span>
+                        <span class="gadget-feature">14 дней</span>
+                    </div>
+                    <div class="gadget-price">24 990 ₽</div>
+                    <button class="gadget-btn">Подробнее →</button>
+                </div>
+            </a>
+
+            <div class="gadget-card reveal">
+                <div class="gadget-image">
+                    ⌚
+                    <span class="gadget-badge">Новинка</span>
+                </div>
+                <div class="gadget-content">
+                    <span class="gadget-category">Умные часы</span>
+                    <h3 class="gadget-title">Apple Watch Ultra 3</h3>
+                    <p class="gadget-desc">Профессиональные часы для экстремальных условий с титановым корпусом</p>
+                    <div class="gadget-features">
+                        <span class="gadget-feature">Титан</span>
+                        <span class="gadget-feature">49 мм</span>
+                        <span class="gadget-feature">36 часов</span>
+                        <span class="gadget-feature">LTE</span>
+                    </div>
+                    <div class="gadget-price">89 990 ₽</div>
+                    <button class="gadget-btn">Подробнее</button>
+                </div>
+            </div>
+
+            <div class="gadget-card reveal">
+                <div class="gadget-image">
+                    💪
+                    <span class="gadget-badge">Топ за свои</span>
+                </div>
+                <div class="gadget-content">
+                    <span class="gadget-category">Фитнес-браслет</span>
+                    <h3 class="gadget-title">Xiaomi Band 9 Pro</h3>
+                    <p class="gadget-desc">Продвинутый фитнес-браслет с GPS и мониторингом здоровья 24/7</p>
+                    <div class="gadget-features">
+                        <span class="gadget-feature">GPS</span>
+                        <span class="gadget-feature">SpO2</span>
+                        <span class="gadget-feature">150 режимов</span>
+                        <span class="gadget-feature">14 дней</span>
+                    </div>
+                    <div class="gadget-price">5 990 ₽</div>
+                    <button class="gadget-btn">Подробнее</button>
+                </div>
+            </div>
+
+            <div class="gadget-card reveal">
+                <div class="gadget-image">
+                    🥽
+                    <span class="gadget-badge">Премиум</span>
+                </div>
+                <div class="gadget-content">
+                    <span class="gadget-category">VR/AR</span>
+                    <h3 class="gadget-title">Meta Quest 4</h3>
+                    <p class="gadget-desc">Шлем виртуальной реальности нового поколения с 4K дисплеями</p>
+                    <div class="gadget-features">
+                        <span class="gadget-feature">4K</span>
+                        <span class="gadget-feature">120 Гц</span>
+                        <span class="gadget-feature">Hand Tracking</span>
+                        <span class="gadget-feature">Wi-Fi 7</span>
+                    </div>
+                    <div class="gadget-price">64 990 ₽</div>
+                    <button class="gadget-btn">Подробнее</button>
+                </div>
+            </div>
+
+            <div class="gadget-card reveal">
+                <div class="gadget-image">
+                    🎧
+                </div>
+                <div class="gadget-content">
+                    <span class="gadget-category">Аудио</span>
+                    <h3 class="gadget-title">AirPods Pro 3</h3>
+                    <p class="gadget-desc">Беспроводные наушники с адаптивным шумоподавлением</p>
+                    <div class="gadget-features">
+                        <span class="gadget-feature">ANC</span>
+                        <span class="gadget-feature">Spatial Audio</span>
+                        <span class="gadget-feature">USB-C</span>
+                        <span class="gadget-feature">30 часов</span>
+                    </div>
+                    <div class="gadget-price">24 990 ₽</div>
+                    <button class="gadget-btn">Подробнее</button>
+                </div>
+            </div>
+
+            <div class="gadget-card reveal">
+                <div class="gadget-image">
+                    📷
+                </div>
+                <div class="gadget-content">
+                    <span class="gadget-category">Камеры</span>
+                    <h3 class="gadget-title">DJI Action 5 Pro</h3>
+                    <p class="gadget-desc">Экшн-камера с невероятной стабилизацией и съёмкой 8K</p>
+                    <div class="gadget-features">
+                        <span class="gadget-feature">8K</span>
+                        <span class="gadget-feature">RockSteady 4.0</span>
+                        <span class="gadget-feature">Водонепр.</span>
+                        <span class="gadget-feature">180 мин</span>
+                    </div>
+                    <div class="gadget-price">44 990 ₽</div>
+                    <button class="gadget-btn">Подробнее</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Информация -->
+    <section class="section">
+        <div class="info-block reveal">
+            <h3>🔥 Тренды носимых устройств 2026</h3>
+            <p>Мир носимых гаджетов продолжает развиваться стремительными темпами. Вот главные тренды этого года:</p>
+            
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <span class="feature-icon">🏥</span>
+                    <h4>Здоровье 24/7</h4>
+                    <p>Непрерывный мониторинг глюкозы, давления и ЭКГ</p>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🔋</span>
+                    <h4>Автономность</h4>
+                    <p>До 30 дней работы без подзарядки</p>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🤖</span>
+                    <h4>ИИ-помощники</h4>
+                    <p>Персональные рекомендации на основе данных</p>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🌐</span>
+                    <h4>Спутниковая связь</h4>
+                    <p>Экстренные вызовы из любой точки мира</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-block reveal">
+            <h3>💡 Как выбрать умные часы?</h3>
+            <p>При выборе умных часов обратите внимание на следующие параметры:</p>
+            <ul style="color: var(--text-light); line-height: 2;">
+                <li><strong>Совместимость</strong> — убедитесь, что часы работают с вашим смартфоном (iOS/Android)</li>
+                <li><strong>Автономность</strong> — от 3 дней для базовых моделей, до 14+ дней для фитнес-браслетов</li>
+                <li><strong>Датчики</strong> — пульс, SpO2, GPS, акселерометр, гироскоп</li>
+                <li><strong>Защита</strong> — минимум IP68, для спорта — 5 ATM или 10 ATM</li>
+                <li><strong>Дисплей</strong> — AMOLED для яркости и контраста, или e-ink для автономности</li>
+                <li><strong>Функции</strong> — NFC для оплаты, музыка, голосовой помощник</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Футер -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <a href="test.html" class="logo">Castus</a>
+                <p>Ваш источник новостей о смартфонах и технологиях.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Разделы</h4>
+                <ul>
+                    <li><a href="test.html#news">Новости</a></li>
+                    <li><a href="smartphones.html">Смартфоны</a></li>
+                    <li><a href="gadgets.html">Гаджеты</a></li>
+                    <li><a href="audio.html">Аудио</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Компания</h4>
+                <ul>
+                    <li><a href="test.html#about">О нас</a></li>
+                    <li><a href="#">Команда</a></li>
+                    <li><a href="#">Реклама</a></li>
+                    <li><a href="#">Контакты</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Информация</h4>
+                <ul>
+                    <li><a href="#">Политика конфиденциальности</a></li>
+                    <li><a href="#">Условия использования</a></li>
+                    <li><a href="#">Cookie</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Castus. Все права защищены</p>
+        </div>
+    </footer>
+
+    <script>
+        const burger = document.getElementById('burger');
+        const navMenu = document.getElementById('navMenu');
+
+        burger.addEventListener('click', () => {
+            burger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                burger.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+
+        function reveal() {
+            const reveals = document.querySelectorAll('.reveal');
+            reveals.forEach(element => {
+                const windowHeight = window.innerHeight;
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < windowHeight - elementVisible) {
+                    element.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', reveal);
+        reveal();
+    </script>
+</body>
+</html>
